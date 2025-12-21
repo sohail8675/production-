@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- VERY IMPORTANT -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Production System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <h1>Production System</h1>
+
+    <!-- ROLE -->
+    <div id="roleSelect" class="card center">
+      <h3>Select Role</h3>
+      <button onclick="showSection('LineLeader')">Line Leader</button>
+      <button onclick="showSection('Manager')">Manager</button>
+    </div>
+
+    <!-- LINE LEADER -->
+    <div id="lineLeaderSection" class="card">
+      <h3>Daily Production Entry</h3>
+
+      <label>Line No</label>
+      <input id="line">
+
+      <label>Model</label>
+      <input id="model">
+
+      <label>Quantity</label>
+      <input id="qty" type="number">
+
+      <label>Reason</label>
+      <input id="reason">
+
+      <button onclick="saveProduction()">Save</button>
+      <p id="msg"></p>
+    </div>
+
+    <!-- MANAGER -->
+    <div id="managerSection" class="card">
+      <h3>Manager Dashboard</h3>
+
+      <label>Select Line</label>
+      <select id="filterLine">
+        <option value="">All Lines</option>
+        <option value="01">Line 01</option>
+        <option value="02">Line 02</option>
+        <option value="03">Line 03</option>
+        <option value="04">Line 04</option>
+        <option value="05">Line 05</option>
+        <option value="06">Line 06</option>
+        <option value="07">Line 07</option>
+        <option value="08">Line 08</option>
+      </select>
+
+      <label>Select Date</label>
+      <input type="date" id="filterDate">
+
+      <button onclick="filterByDate()">Filter</button>
+      <button class="clear" onclick="clearFilter()">Clear</button>
+
+      <p><b>Total Quantity:</b> <span id="totalQty">0</span></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th>Model</th>
+              <th>Qty</th>
+              <th>Reason</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
