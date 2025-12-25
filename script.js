@@ -1,153 +1,126 @@
-// ===== PAGE LOAD =====
 document.addEventListener("DOMContentLoaded", () => {
+  hideAll();
   document.getElementById("loginSection").style.display = "block";
-  document.getElementById("roleSelect").style.display = "none";
-  document.getElementById("lineLeaderSection").style.display = "none";
-  document.getElementById("managerSection").style.display = "none";
 });
 
-// ===== LOGIN =====
+function hideAll() {
+  ["loginSection","roleSelect","lineLeaderSection","managerSection"]
+    .forEach(id => document.getElementById(id).style.display = "none");
+}
+
+/* LOGIN */
 function login() {
   const pin = document.getElementById("pin").value;
-  const msg = document.getElementById("loginMsg");
-
   if (pin !== "1234") {
-    msg.innerText = "Wrong PIN";
+    document.getElementById("loginMsg").innerText = "Wrong PIN";
     return;
   }
-
-  msg.innerText = "";
-  document.getElementById("loginSection").style.display = "none";
+  hideAll();
   document.getElementById("roleSelect").style.display = "block";
 }
 
-// ===== ROLE SWITCH =====
+/* ROLE */
 function showSection(role) {
-  document.getElementById("roleSelect").style.display = "none";
-  document.getElementById("lineLeaderSection").style.display = "none";
-  document.getElementById("managerSection").style.display = "none";
-
+  hideAll();
   if (role === "LineLeader") {
     document.getElementById("lineLeaderSection").style.display = "block";
-  }
-
-  if (role === "Manager") {
+  } else {
     document.getElementById("managerSection").style.display = "block";
     loadTable();
   }
 }
 
-// ===== BACK =====
 function goBack() {
-  document.getElementById("lineLeaderSection").style.display = "none";
-  document.getElementById("managerSection").style.display = "none";
+  hideAll();
   document.getElementById("roleSelect").style.display = "block";
 }
 
-// ===== SAVE DATA =====
+/* SAVE */
 function saveProduction() {
-  const line = getVal("line");
-  const model = getVal("model");
-  const plannedQty = getVal("plannedQty");
-  const actualQty = getVal("qty");
-  const reason = getVal("reason");
-  const leader = getVal("lineLeaderSelect");
-  const pqc = getVal("pqcSelect");
+  const line = v("line");
+  const model = v("model");
+  const planned = Number(v("plannedQty"));
+  const actual = Number(v("actualQty"));
+  const reason = v("reason");
+  const leader = v("leader");
+  const pqc = v("pqc");
 
-  if (!line || !model || !plannedQty || !actualQty || !leader || !pqc) {
-    document.getElementById("msg").innerText = "All fields required";
+  if (!line || !model || !planned || !actual || !leader || !pqc) {
+    m("All fields required");
     return;
   }
 
-  if (actualQty < plannedQty && !reason) {
-    document.getElementById("msg").innerText = "Reason required for low production";
+  if (actual < planned && !reason) {
+    m("Reason mandatory for low production");
     return;
   }
-
-  const record = {
-    line,
-    model,
-    plannedQty: Number(plannedQty),
-    actualQty: Number(actualQty),
-    reason: reason || "-",
-    leader,
-    pqc,
-    time: new Date().toLocaleString()
-  };
 
   const records = JSON.parse(localStorage.getItem("records") || "[]");
-  records.push(record);
+  records.push({
+    line, model, planned, actual,
+    reason: reason || "-",
+    leader, pqc,
+    time: new Date().toLocaleString()
+  });
   localStorage.setItem("records", JSON.stringify(records));
 
-  document.getElementById("msg").innerText = "Saved Successfully";
-
-  ["line","model","plannedQty","qty","reason"].forEach(id => document.getElementById(id).value="");
-  document.getElementById("lineLeaderSelect").value = "";
-  document.getElementById("pqcSelect").value = "";
+  m("Saved Successfully");
+  ["line","model","plannedQty","actualQty","reason","leader","pqc"]
+    .forEach(id => document.getElementById(id).value = "");
 }
 
-function getVal(id) {
-  return document.getElementById(id).value.trim();
-}
+function v(id){ return document.getElementById(id).value.trim(); }
+function m(t){ document.getElementById("msg").innerText = t; }
 
-// ===== LOAD MANAGER TABLE =====
+/* TABLE */
 function loadTable(list) {
   const data = list || JSON.parse(localStorage.getItem("records") || "[]");
   const body = document.getElementById("tableBody");
   body.innerHTML = "";
-
   let total = 0;
 
   data.forEach(r => {
-    total += r.actualQty;
+    total += r.actual;
     body.innerHTML += `
       <tr>
         <td>${r.line}</td>
         <td>${r.model}</td>
-        <td>${r.plannedQty}</td>
-        <td>${r.actualQty}</td>
+        <td>${r.planned}</td>
+        <td>${r.actual}</td>
         <td>${r.reason}</td>
         <td>${r.leader}</td>
         <td>${r.pqc}</td>
         <td>${r.time}</td>
       </tr>`;
   });
-
   document.getElementById("totalQty").innerText = total;
 }
 
-// ===== FILTER =====
+/* FILTER */
 function filterData() {
-  const date = filterDate.value;
-  const line = filterLine.value;
+  const d = filterDate.value;
+  const l = filterLine.value;
+  let data = JSON.parse(localStorage.getItem("records") || "[]");
 
-  let records = JSON.parse(localStorage.getItem("records") || "[]");
-
-  if (date)
-    records = records.filter(r => r.time.startsWith(new Date(date).toLocaleDateString()));
-  if (line)
-    records = records.filter(r => r.line === line);
-
-  loadTable(records);
+  if (d) data = data.filter(r => r.time.startsWith(new Date(d).toLocaleDateString()));
+  if (l) data = data.filter(r => r.line === l);
+  loadTable(data);
 }
 
-// ===== EXPORT =====
+/* EXPORT */
 function exportCSV() {
   let csv = "Line,Model,Planned,Actual,Reason,Leader,PQC,Time\n";
-  const records = JSON.parse(localStorage.getItem("records") || "[]");
-
-  records.forEach(r => {
-    csv += `${r.line},${r.model},${r.plannedQty},${r.actualQty},${r.reason},${r.leader},${r.pqc},${r.time}\n`;
-  });
-
-  const blob = new Blob([csv], { type: "text/csv" });
+  JSON.parse(localStorage.getItem("records") || "[]")
+    .forEach(r => {
+      csv += `${r.line},${r.model},${r.planned},${r.actual},${r.reason},${r.leader},${r.pqc},${r.time}\n`;
+    });
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
   a.download = "production.csv";
   a.click();
 }
 
-// ===== RESET =====
+/* RESET */
 function resetData() {
   if (confirm("Delete all data?")) {
     localStorage.removeItem("records");

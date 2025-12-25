@@ -1,15 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Production System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="app">
   <h1>Production System</h1>
+
   <!-- LOGIN -->
   <div id="loginSection" class="card center">
     <h3>Login</h3>
@@ -17,83 +18,90 @@
     <button onclick="login()">Login</button>
     <p id="loginMsg"></p>
   </div>
+
   <!-- ROLE -->
   <div id="roleSelect" class="card center">
     <h3>Select Role</h3>
     <button onclick="showSection('LineLeader')">Line Leader</button>
     <button onclick="showSection('Manager')">Manager</button>
   </div>
+
   <!-- LINE LEADER -->
   <div id="lineLeaderSection" class="card">
     <h3>Daily Production Entry</h3>
+
     <label>Line No</label>
     <input id="line">
+
     <label>Model</label>
     <input id="model">
-    <label>Planned Qty</label>
+
+    <label>Planned Quantity</label>
     <input id="plannedQty" type="number">
-    <label>Actual Qty</label>
-    <input id="qty" type="number">
-    <label>Reason for low planned production</label>
+
+    <label>Actual Quantity</label>
+    <input id="actualQty" type="number">
+
+    <label>Reason (mandatory if Actual < Planned)</label>
     <input id="reason">
+
     <label>Line Leader</label>
-    <select id="lineLeaderSelect">
+    <select id="leader">
       <option value="">Select</option>
-      <option value="Sreekant">Sreekant</option>
-      <option value="Nithin">Nithin</option>
-      <option value="Jafar">Jafar</option>
-      <option value="Siva">Siva</option>
-      <option value="Teja">Teja</option>
-      <option value="Rana">Rana</option>
+      <option>Sreekant</option>
+      <option>Nithin</option>
+      <option>Jafar</option>
+      <option>Siva</option>
+      <option>Teja</option>
     </select>
-    <label>PQC Name</label>
-    <select id="pqcSelect">
+
+    <label>PQC</label>
+    <select id="pqc">
       <option value="">Select</option>
-      <option value="Nikhil">Nikhil</option>
-      <option value="Vinod">Vinod</option>
-      <option value="Yaseen">Yaseen</option>
-      <option value="Mynu">Mynu</option>
-      <option value="shubham">shubham</option>
+      <option>Nikhil</option>
+      <option>Vinod</option>
+      <option>Yaseen</option>
+      <option>Mynu</option>
     </select>
+
     <button onclick="saveProduction()">Save</button>
     <button class="clear" onclick="goBack()">Back</button>
     <p id="msg"></p>
   </div>
+
   <!-- MANAGER -->
   <div id="managerSection" class="card">
     <h3>Manager Dashboard</h3>
-    <div class="manager-controls">
-      <label>Date</label>
+
+    <div class="controls">
       <input type="date" id="filterDate">
-      <label>Filter Line</label>
       <select id="filterLine">
-        <option value="">All</option>
-        <option value="01">01</option>
-        <option value="02">02</option>
-        <option value="03">03</option>
-        <option value="04">04</option>
-        <option value="05">05</option>
-        <option value="06">06</option>
-        <option value="07">07</option>
-        <option value="08">08</option>
+        <option value="">All Lines</option>
+        <option>01</option><option>02</option><option>03</option><option>04</option>
+        <option>05</option><option>06</option><option>07</option><option>08</option>
       </select>
+    </div>
+
+    <div class="controls">
       <button onclick="filterData()">Filter</button>
       <button onclick="exportCSV()">Export Excel</button>
       <button class="clear" onclick="resetData()">Delete All</button>
       <button class="clear" onclick="goBack()">Back</button>
     </div>
-    <p><b>Total Quantity:</b> <span id="totalQty">0</span></p>
+
+    <p><b>Total Actual Qty:</b> <span id="totalQty">0</span></p>
+
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Line</th>
             <th>Model</th>
-            <th>Planned Qty</th>
-            <th>Actual Qty</th>
+            <th>Planned</th>
+            <th>Actual</th>
             <th>Reason</th>
-            <th>Line Leader</th>
-            <th>PQC Name</th>
+            <th>Leader</th>
+            <th>PQC</th>
             <th>Time</th>
           </tr>
         </thead>
@@ -102,6 +110,7 @@
     </div>
   </div>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>
